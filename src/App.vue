@@ -1,17 +1,21 @@
 <template>
   <div class="app">
-    <h1>Post Page</h1>
-    <my-button @click="showDialog">Create Post</my-button>
+    <div class="app_block">
+      <h1>Post Page</h1>
+      <my-button @click="showDialog">Create Post</my-button>
+    </div>
     <my-dialog v-model:show="dialogVisible">
       <post-form @create="createPost" />
     </my-dialog>
-    <post-list @remove="removePost" :posts="posts" />
+    <post-list v-if="!isPostLoading" @remove="removePost" :posts="posts" />
+    <div v-else class="loader"></div>
   </div>
 </template>
 
 <script>
 import PostForm from "@/components/PostForm.vue";
 import PostList from "@/components/PostList.vue";
+import axios from "axios";
 export default {
   components: {
     PostForm,
@@ -19,12 +23,9 @@ export default {
   },
   data() {
     return {
-      posts: [
-        { id: 1, title: "Javascript", body: "Description" },
-        { id: 2, title: "Javascript", body: "Description 2" },
-        { id: 3, title: "Javascript", body: "Description 3" },
-      ],
+      posts: [],
       dialogVisible: false,
+      isPostLoading: false,
     };
   },
   methods: {
@@ -38,6 +39,22 @@ export default {
     showDialog() {
       this.dialogVisible = true;
     },
+    async fetchPosts() {
+      try {
+        this.isPostLoading = true;
+        const res = await axios.get(
+          "https://jsonplaceholder.typicode.com/posts?_limit=10"
+        );
+        this.posts = res.data;
+      } catch (error) {
+        alert(error);
+      } finally {
+        this.isPostLoading = false;
+      }
+    },
+  },
+  mounted() {
+    this.fetchPosts();
   },
 };
 </script>
@@ -51,5 +68,37 @@ export default {
 
 .app {
   padding: 40px;
+}
+
+.app_block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.app_block button {
+  margin-top: 10px;
+}
+
+.loader {
+  border: 8px solid transparent;
+  border-top: 8px solid #000000;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto;
+  margin-top: 15px;
+}
+
+/* Анимация спиннера */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

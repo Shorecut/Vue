@@ -1,5 +1,5 @@
 <template>
-  <div v-if="posts.length > 0">
+  <div style="margin-top: 15px" v-if="posts.length > 0">
     <h2 style="text-align: center">Post List</h2>
     <post-item
       @remove="$emit('remove', post)"
@@ -8,7 +8,7 @@
       :post="post"
     />
   </div>
-  <h2 v-else style="text-align: center">Posts Empty</h2>
+  <h2 v-else style="text-align: center; margin-top: 15px">Posts are Empty</h2>
 </template>
 <script>
 import PostItem from "./PostItem.vue";
