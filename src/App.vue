@@ -1,13 +1,18 @@
 <template>
   <div class="app">
+    <h1>Post Page</h1>
     <div class="app_block">
-      <h1>Post Page</h1>
       <my-button @click="showDialog">Create Post</my-button>
+      <my-select v-model="selectedSort" :options="sortOptions" />
     </div>
     <my-dialog v-model:show="dialogVisible">
       <post-form @create="createPost" />
     </my-dialog>
-    <post-list v-if="!isPostLoading" @remove="removePost" :posts="posts" />
+    <post-list
+      v-if="!isPostLoading"
+      @remove="removePost"
+      :posts="sortedPosts"
+    />
     <div v-else class="loader"></div>
   </div>
 </template>
@@ -26,6 +31,12 @@ export default {
       posts: [],
       dialogVisible: false,
       isPostLoading: false,
+      selectedSort: "",
+      sortOptions: [
+        { value: "title", name: "by name" },
+        { value: "body", name: "by desc" },
+        { value: "id", name: "by Id" },
+      ],
     };
   },
   methods: {
@@ -56,6 +67,32 @@ export default {
   mounted() {
     this.fetchPosts();
   },
+  computed: {
+    sortedPosts() {
+      return this.posts.sort((post1, post2) => {
+        const a = post1[this.selectedSort];
+        const b = post2[this.selectedSort];
+        if (typeof a === "string") {
+          return a.localeCompare(b);
+        } else {
+          return a - b;
+        }
+      });
+    },
+  },
+  //watch: {
+  //  selectedSort(newValue) {
+  //    this.posts.sort((post1, post2) => {
+  //      const a = post1[newValue];
+  //      const b = post2[newValue];
+  //      if (typeof a === "string") {
+  //        return a.localeCompare(b);
+  //      } else {
+  //        return a - b;
+  //      }
+  //    });
+  //  },
+  //},
 };
 </script>
 
@@ -71,14 +108,9 @@ export default {
 }
 
 .app_block {
+  margin: 15px 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.app_block button {
-  margin-top: 10px;
+  justify-content: space-between;
 }
 
 .loader {

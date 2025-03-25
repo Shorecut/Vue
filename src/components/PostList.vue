@@ -8,7 +8,7 @@
       :post="post"
     />
   </div>
-  <h2 v-else style="text-align: center; margin-top: 15px">Posts are Empty</h2>
+  <h2 v-else style="text-align: center; margin-top: 15px">NO Posts</h2>
 </template>
 <script>
 import PostItem from "./PostItem.vue";
