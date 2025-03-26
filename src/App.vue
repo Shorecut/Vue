@@ -15,6 +15,7 @@
       :posts="sortedAndSearchPosts"
     />
     <div v-else class="loader"></div>
+    <my-pagination v-model="page" :totalPages="totalPages" />
   </div>
 </template>
 
@@ -34,6 +35,10 @@ export default {
       isPostLoading: false,
       selectedSort: "",
       searchQuery: "",
+      page: 1,
+      limit: 10,
+      totalPages: 100,
+
       sortOptions: [
         { value: "title", name: "by name" },
         { value: "body", name: "by desc" },
@@ -52,12 +57,22 @@ export default {
     showDialog() {
       this.dialogVisible = true;
     },
+    changePage(pageNumber) {
+      this.page = pageNumber;
+    },
     async fetchPosts() {
       try {
         this.isPostLoading = true;
         const res = await axios.get(
-          "https://jsonplaceholder.typicode.com/posts?_limit=10"
+          "https://jsonplaceholder.typicode.com/posts",
+          {
+            params: {
+              _page: this.page,
+              _limit: this.limit,
+            },
+          }
         );
+        this.totalPages = Math.ceil(res.headers["x-total-count"] / this.limit);
         this.posts = res.data;
       } catch (error) {
         alert(error);
@@ -71,35 +86,37 @@ export default {
   },
   computed: {
     sortedPosts() {
-      return this.posts.sort((post1, post2) => {
+      return [...this.posts].sort((post1, post2) => {
         const a = post1[this.selectedSort];
         const b = post2[this.selectedSort];
-        if (typeof a === "string") {
-          return a.localeCompare(b);
-        } else {
-          return a - b;
-        }
+
+        if (!a || !b) return 0;
+
+        return typeof a === "string" ? a.localeCompare(b) : a - b;
       });
     },
     sortedAndSearchPosts() {
-      return this.posts.filter((post) =>
+      return this.sortedPosts.filter((post) =>
         post.title.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     },
   },
-  //watch: {
-  //  selectedSort(newValue) {
-  //    this.posts.sort((post1, post2) => {
-  //      const a = post1[newValue];
-  //      const b = post2[newValue];
-  //      if (typeof a === "string") {
-  //        return a.localeCompare(b);
-  //      } else {
-  //        return a - b;
-  //      }
-  //    });
-  //  },
-  //},
+  watch: {
+    //  selectedSort(newValue) {
+    //    this.posts.sort((post1, post2) => {
+    //      const a = post1[newValue];
+    //      const b = post2[newValue];
+    //      if (typeof a === "string") {
+    //        return a.localeCompare(b);
+    //      } else {
+    //        return a - b;
+    //      }
+    //    });
+    //  },
+    page() {
+      this.fetchPosts();
+    },
+  },
 };
 </script>
 
