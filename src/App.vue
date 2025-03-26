@@ -15,7 +15,8 @@
       :posts="sortedAndSearchPosts"
     />
     <div v-else class="loader"></div>
-    <my-pagination v-model="page" :totalPages="totalPages" />
+    <div ref="observer"></div>
+    <!--<my-pagination v-model="page" :totalPages="totalPages" />-->
   </div>
 </template>
 
@@ -57,9 +58,9 @@ export default {
     showDialog() {
       this.dialogVisible = true;
     },
-    changePage(pageNumber) {
-      this.page = pageNumber;
-    },
+    //changePage(pageNumber) {
+    //  this.page = pageNumber;
+    //},
     async fetchPosts() {
       try {
         this.isPostLoading = true;
@@ -80,9 +81,39 @@ export default {
         this.isPostLoading = false;
       }
     },
+    async loadPosts() {
+      try {
+        this.page += 1;
+        const res = await axios.get(
+          "https://jsonplaceholder.typicode.com/posts",
+          {
+            params: {
+              _page: this.page,
+              _limit: this.limit,
+            },
+          }
+        );
+
+        this.totalPages = Math.ceil(res.headers["x-total-count"] / this.limit);
+        this.posts = [...this.posts, ...res.data];
+      } catch (error) {
+        alert(error);
+      }
+    },
   },
   mounted() {
     this.fetchPosts();
+    const options = {
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+    const callback = (entries, observer) => {
+      if (entries[0].isIntersecting && this.page < this.totalPages) {
+        this.loadPosts();
+      }
+    };
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
   computed: {
     sortedPosts() {
@@ -113,9 +144,10 @@ export default {
     //      }
     //    });
     //  },
-    page() {
-      this.fetchPosts();
-    },
+    //pag.
+    //page() {
+    //  this.fetchPosts();
+    //},
   },
 };
 </script>
