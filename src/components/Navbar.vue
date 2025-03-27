@@ -1,6 +1,6 @@
 <template>
   <div class="navbar">
-    <div @click="$router.push('/')">VUE</div>
+    <div style="cursor: pointer" @click="$router.push('/')">VUE</div>
     <div class="navbar__btns">
       <my-button @click="$router.push('/posts')">Posts</my-button>
       <my-button @click="$router.push('/about')" style="margin-left: 10px"

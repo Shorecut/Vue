@@ -1,5 +1,5 @@
 <template>
-  <select :value="modelValue" @change="changeOption">
+  <select style="cursor: pointer" :value="modelValue" @change="changeOption">
     <option disabled value="">Choose from list</option>
     <option v-for="option in options" :key="option.value" :value="option.value">
       {{ option.name }}

@@ -7,19 +7,22 @@
 </template>
 
 <script>
+import dialogMixin from "@/components/mixins/dialogMixin";
+
 export default {
   name: "my-dialog",
-  props: {
-    show: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  methods: {
-    hideDialog() {
-      this.$emit("update:show", false);
-    },
-  },
+  mixins: [dialogMixin],
+  //props: {
+  //  show: {
+  //    type: Boolean,
+  //    default: true,
+  //  },
+  //},
+  //methods: {
+  //  hideDialog() {
+  //    this.$emit("update:show", false);
+  //  },
+  //},
 };
 </script>
 
