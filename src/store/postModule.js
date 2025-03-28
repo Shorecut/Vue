@@ -55,6 +55,9 @@ export const postModule = {
     setSelectedSort(state, selectedSort) {
       state.selectedSort = selectedSort;
     },
+    setRemovePost(state, postId) {
+      state.posts = state.posts.filter((post) => post.id !== postId);
+    },
   },
   actions: {
     async fetchPosts({ state, commit }) {

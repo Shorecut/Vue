@@ -19,7 +19,7 @@
     </my-dialog>
     <post-list
       v-if="!isPostLoading"
-      @remove="removePost"
+      @remove="(post) => setRemovePost(post.id)"
       :posts="sortedAndSearchPosts"
     />
     <div v-else class="loader"></div>
@@ -52,14 +52,13 @@ export default {
       setPage: "post/setPage",
       setSearchQuery: "post/setSearchQuery",
       setSelectedSort: "post/setSelectedSort",
+      setRemovePost: "post/setRemovePost",
     }),
     createPost(post) {
       this.posts.push(post);
       this.dialogVisible = false;
     },
-    removePost(post) {
-      this.posts = this.posts.filter((p) => p.id !== post.id);
-    },
+
     showDialog() {
       this.dialogVisible = true;
     },
